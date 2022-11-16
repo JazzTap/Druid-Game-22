@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Druid Game</title>
+<link rel="stylesheet" type="text/css" href="./inspector.css">
+<body>
+
+<script type="module">
+import {Graph, readJSON, writeJSON} from "./lib/graph.es.js"
+import {html} from "./lib/htl.js"
+
+import {makeShape, makeSocial} from "./propagation.js"
+import {betrayalSplot} from "./domain.js"
+
+/*
+<script src="./lib/dagre-d3.core.min.js" >
+console.log(dagred3)
+*/
+// fails due to dagre-d3 using a bunch of require(). 
+// just start porting from wfc and handroll a frontend.
+
+const shape = makeShape([..."0123456"])
+const social = makeSocial(shape, betrayalSplot)
+
+document.body.appendChild(html`${social.nodes().map(v => html`<div>${v}, ${JSON.stringify(social.node(v))}</div>`)}`)
+document.body.appendChild(html`${shape.edges().map(u => html`<div>${u.v}, ${u.w}, ${social.edge(u).kind}</div>`)}`)
+
+</script>

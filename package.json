@@ -1,0 +1,14 @@
+{
+  "name": "@jazztap/splot-manager",
+  "main": "cf308100da275841@1057.js",
+  "version": "1057.0.0",
+  "homepage": "https://observablehq.com/@jazztap/splot-manager",
+  "author": {
+    "name": "Jasmine Otto",
+    "url": "https://observablehq.com/@jazztap"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4 - 5"
+  }
+}
