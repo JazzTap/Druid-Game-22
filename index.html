@@ -2,26 +2,31 @@
 <meta charset="utf-8">
 <title>Druid Game</title>
 <link rel="stylesheet" type="text/css" href="./inspector.css">
+
+<script src="./lib/d3.v7.min.js"></script>
+<!-- <script src="./lib/tau-prolog.core.js"></script> -->
 <body>
 
 <script type="module">
 import {Graph, readJSON, writeJSON} from "./lib/graph.es.js"
 import {html} from "./lib/htl.js"
 
+console.log(d3)
+
 import {makeShape, makeSocial} from "./propagation.js"
 import {betrayalSplot} from "./domain.js"
+import {render} from "./render.js"
 
-/*
-<script src="./lib/dagre-d3.core.min.js" >
-console.log(dagred3)
-*/
-// fails due to dagre-d3 using a bunch of require(). 
-// just start porting from wfc and handroll a frontend.
-
-const shape = makeShape([..."0123456"])
+const shape = makeShape([..."12345"])
 const social = makeSocial(shape, betrayalSplot)
+window.social = social
 
 document.body.appendChild(html`${social.nodes().map(v => html`<div>${v}, ${JSON.stringify(social.node(v))}</div>`)}`)
 document.body.appendChild(html`${shape.edges().map(u => html`<div>${u.v}, ${u.w}, ${social.edge(u).kind}</div>`)}`)
 
+let res = html`<svg width=400 height=300></svg>`
+document.body.appendChild(res)
+render(res, social)
+
 </script>
+

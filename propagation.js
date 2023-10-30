@@ -1,5 +1,44 @@
 
 import {Graph, readJSON, writeJSON} from "./lib/graph.es.js"
+import {pick} from "./utility.js"
+
+function confabulateHook (world) {
+  return (constraints, splot, n = 4) => {
+    // given a partial casting, complete the splot.
+    let cast = constraints;
+    let choices = world
+      .everyone()
+      .filter((id) => ![...constraints.keys()].includes(id));
+
+    while (cast.size < n) {
+      let id = pick(choices);
+      // TODO: favor characters with history, except for recruitment splots
+      choices = choices.filter((j) => j != id);
+      cast.set(id, "");
+    }
+    // mutable debug = constraints;
+
+    // TODO: pull edges from character history
+    let initial = makeShape([...cast.keys()]);
+    // apply constraints
+    [...constraints.entries()].forEach(([id, state]) => {
+      initial.setNode(id, { state, ...initial.node(id) });
+    });
+
+    let res = makeSocial(initial, splot);
+    res.nodes().forEach((j) => {
+      res.setNode(j, { label: world.get("called", j), ...res.node(j) });
+    });
+
+    // CLUDGE: deep copy in makeSocial should have done this already
+    initial.edges().forEach((vw) => {
+      initial.setEdge(vw, undefined);
+    });
+    return [initial, res];
+
+    // return makeTrace(initial, social);
+  }
+}
 
 // given a list of IDs, generates a random network over those.
 export function makeShape(nodeIds, nodeLabels = new Map()) {
@@ -116,9 +155,4 @@ export function makeShape(nodeIds, nodeLabels = new Map()) {
     // g.setNode("A", "glad");
     if (verbose) console.log("wfc succeeded");
     return g;
-  }
-  
-  export  const pick = (choices, mask = choices.map((_) => true)) => {
-    let res = choices.filter((_, i) => mask[i]);
-    return res[Math.floor(Math.random() * res.length)];
   }
